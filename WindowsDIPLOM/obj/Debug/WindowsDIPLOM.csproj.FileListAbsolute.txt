@@ -1,0 +1,11 @@
+W:\CORE\WindowsDIPLOM\bin\Debug\WindowsDIPLOM.exe.config
+W:\CORE\WindowsDIPLOM\bin\Debug\WindowsDIPLOM.exe
+W:\CORE\WindowsDIPLOM\bin\Debug\WindowsDIPLOM.pdb
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.AssemblyReference.cache
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.SuggestedBindingRedirects.cache
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.Properties.Resources.resources
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.GenerateResource.cache
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.CoreCompileInputs.cache
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.exe
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.pdb
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.Form1.resources
