@@ -709,14 +709,14 @@ namespace WindowsDIPLOM
            // if (checkBox1.Checked)
             //{ }
                 
-                TZ = Math.Pow(Vtp, 3) / (nca * qca * 60);
+                TZ = Math.Pow(Vtp, 3) / (nca * qca * 60); // Время приготовления и закачки цементного раствора
             
             Double Tstop;
-            Tstop = Math.Pow(Vstop, 3) / (qcamin * 60);
+            Tstop = Math.Pow(Vstop, 3) / (qcamin * 60); // время на посадку пробки
             Double hi_i;
             hi_i = (Fkp * L) / (Ftp + Fkp) + Math.Pow(10, 6) * Fkp * (Pca_i - PDYN_i) / (9.806 * (Ftp + Fkp) * (pcp - pp)) + (L * Ftp - Vtp) / (Ftp + Fkp);
             Double Vpr_i;
-            Vpr_i = 0.785 * Math.Pow(d, 2) * hi_i;
+            Vpr_i = 0.785 * Math.Pow(d, 2) * hi_i; // Объём продавочной жидкости закаченной на i скорости
             Double tpr_i;
             tpr_i = Vpr_i * 1000 / (nca * qca * 60); // время работы ЦА на i  скорости при продавке цементного раствора
             Double Tpr;
