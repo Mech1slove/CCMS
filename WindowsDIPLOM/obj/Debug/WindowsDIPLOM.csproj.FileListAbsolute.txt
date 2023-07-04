@@ -9,3 +9,16 @@ W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.CoreCompileInputs.cache
 W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.exe
 W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.pdb
 W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.Form1.resources
+W:\CORE\WindowsDIPLOM\bin\Debug\EPPlus.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\EPPlus.Interfaces.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\EPPlus.System.Drawing.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\Microsoft.IO.RecyclableMemoryStream.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\EPPlus.xml
+W:\CORE\WindowsDIPLOM\bin\Debug\Microsoft.IO.RecyclableMemoryStream.xml
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.CopyComplete
+W:\CORE\WindowsDIPLOM\obj\Debug\WindowsDIPLOM.csproj.ResolveComReference.cache
+W:\CORE\WindowsDIPLOM\bin\Debug\Spire.Pdf.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\Spire.XLS.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\Microsoft.mshtml.dll
+W:\CORE\WindowsDIPLOM\bin\Debug\Spire.Pdf.xml
+W:\CORE\WindowsDIPLOM\bin\Debug\Spire.XLS.xml

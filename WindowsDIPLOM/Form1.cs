@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.Data.OleDb;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.Office.Interop.Excel;
+using System.IO;
+using Spire.Xls;
+using Workbook = Spire.Xls.Workbook;
+using Worksheet = Spire.Xls.Worksheet;
 
 namespace WindowsDIPLOM
 {
@@ -20,7 +28,7 @@ namespace WindowsDIPLOM
         Double q; // расход цемента для приготовления 1м3 тампонажного раствора
         Double d; // внутренний диаметр колоны 
         Double lcs; // высота цементного стакана
-        Double Ksj; // коэффициент сжимаемости
+        Double Ksj; // коэффициент сжимаемости продавчоной жидкости
         Double lb; // длина столба жидкости в кольцевом пространнстве 
         Double lc; // длина колонны 
         Double Kv; // коэффициент учитывающий потери жидкости
@@ -64,7 +72,7 @@ namespace WindowsDIPLOM
         Double Pca_i;
         Double PDYN_i;
         Double TTNO;
-        Double Messin; // вывод ошибки
+        String Messin= "Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку"; // вывод ошибки
 
 
         public Form1()
@@ -72,7 +80,10 @@ namespace WindowsDIPLOM
             InitializeComponent();
         }
 
-        
+        string filePath = "путь_к_файлу.xlsx";
+
+
+
 
 
 
@@ -83,66 +94,64 @@ namespace WindowsDIPLOM
             try
             {
                 // Получение значения переменной из TextBox
-                 Kp = Double.Parse(textBox1.Text);
-                
+                Kp = Double.Parse(textBox1.Text);
+                textBox43.Text = null;
                 // Дальнейшая обработка переменной
-                
+
             }
             catch (FormatException)
             {
                 // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, попробуйте ввести значение без букв, при вводе нецелочисленных переменных используйте запятую,а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
                 // MessageBox.Show("Некорректный ввод переменной!");
                 //textBox1.Text = null;
             }
             //catch (Exception ex)
             //{
-                // Обработка других исключений
-                // MessageBox.Show($"Ошибка: {ex.Message}");
-                //textBox1.Text = null;
+            // Обработка других исключений
+            // MessageBox.Show($"Ошибка: {ex.Message}");
+            //textBox1.Text = null;
             //}
-
-
-           
-           
-
-            
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                // Получение значения переменной из TextBox
+                
                 dc = Double.Parse(textBox2.Text);
-
-                // Дальнейшая обработка переменной
+                textBox43.Text = null;
+                
 
             }
             catch (FormatException)
-            {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-               
+            {          if ((textBox43.Text !=null)||(textBox43.Text== "Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }                    
+                                             
             }
             //dc = Convert.ToDouble(textBox2.Text);
-            
+
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                // Получение значения переменной из TextBox
+                
                 dh = Double.Parse(textBox3.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
             //dh = Convert.ToDouble(textBox3.Text);
@@ -156,16 +165,17 @@ namespace WindowsDIPLOM
                 // Получение значения переменной из TextBox
                 lcp = Double.Parse(textBox4.Text);
 
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // lcp = Convert.ToDouble(textBox4.Text);
+            // lcp = Convert.ToDouble(textBox4.Text);
 
         }
 
@@ -176,16 +186,17 @@ namespace WindowsDIPLOM
                 // Получение значения переменной из TextBox
                 d = Double.Parse(textBox5.Text);
 
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // d = Convert.ToDouble(textBox5.Text);
+            // d = Convert.ToDouble(textBox5.Text);
 
         }
 
@@ -195,17 +206,17 @@ namespace WindowsDIPLOM
             {
                 // Получение значения переменной из TextBox
                 lcs = Double.Parse(textBox6.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // lcs = Convert.ToDouble(textBox6.Text);
+            // lcs = Convert.ToDouble(textBox6.Text);
 
         }
 
@@ -215,17 +226,17 @@ namespace WindowsDIPLOM
             {
                 // Получение значения переменной из TextBox
                 Ksj = Double.Parse(textBox7.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // Ksj = Convert.ToDouble(textBox7.Text);
+            // Ksj = Convert.ToDouble(textBox7.Text);
 
         }
 
@@ -235,17 +246,17 @@ namespace WindowsDIPLOM
             {
                 // Получение значения переменной из TextBox
                 lb = Double.Parse(textBox8.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // lb = Convert.ToDouble(textBox8.Text);
+            // lb = Convert.ToDouble(textBox8.Text);
 
         }
 
@@ -255,17 +266,17 @@ namespace WindowsDIPLOM
             {
                 // Получение значения переменной из TextBox
                 lc = Double.Parse(textBox9.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
-           // lc = Convert.ToDouble(textBox9.Text);
+            // lc = Convert.ToDouble(textBox9.Text);
 
         }
 
@@ -273,56 +284,36 @@ namespace WindowsDIPLOM
         {
             try
             {
-                // Получение значения переменной из TextBox
                 Kv = Double.Parse(textBox10.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // Kv = Convert.ToDouble(textBox10.Text);
+            // Kv = Convert.ToDouble(textBox10.Text);
 
         }
 
         private void textBox11_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                // Получение значения переменной из TextBox
-                dc = Double.Parse(textBox11.Text);
-
-                // Дальнейшая обработка переменной
-
-            }
-            catch (FormatException)
-            {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-
-            }
-           // dc = Convert.ToDouble(textBox11.Text);
-
-        }
+        { }
 
         private void textBox12_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                // Получение значения переменной из TextBox
                 kc = Double.Parse(textBox12.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
 
             }
             //kc = Convert.ToDouble(textBox12.Text);
@@ -331,36 +322,67 @@ namespace WindowsDIPLOM
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Vtp = 0.785 * Kp * ((dc * 2 - dh * 2) * lcp + d * 2 * lcs); // Объём тампонажного раствора
+            Vtp = 0.785 * (lcp * Kp * (Math.Pow(dc, 2) - Math.Pow(dh, 2)) + Math.Pow(d, 2) * lcs); // Объём тампонажного раствора
             textBox13.Text = Vtp.ToString();
 
-            Volume_fluid_dis = 0.785 * Ksj * d * 2 * (lc - lcs); // Объём продавочной жидкости
+
+
+
+            Volume_fluid_dis = 0.785 * Ksj * Math.Pow(d, 2) * (lc - lcs); // Объём продавочной жидкости
             textBox14.Text = Volume_fluid_dis.ToString();
 
-            Volume_buffer = 0.785 * (dc * 2 - dh) * Kp * lb;// Объём буферной жидкости
+            Volume_buffer = 0.785 * (dc - dh) * Kp * lb;// Объём буферной жидкости
             textBox15.Text = Volume_buffer.ToString();
 
             switch (comboBox1.Text)
             {
-                case "Цемент 1":
-                    pcp = 1700;
+                
+
+                case "Облегчённый тампонажный портландцемент для низких и нормальных температур":
+                    pcp = 1400;
                     break;
 
-                case "Цемент 2":
-                    pcp = 1800;
+                case "Облегчённый тампонажный портландцемент для нормальных температур и высоких":
+                    pcp = 1500;
                     break;
 
-                case "Цемент 3":
+                case "Облегчённый тампонажный цемент для горячих скважин":
+                    pcp = 1650;
+                    break;
+            case "Облегчённый тампонажный цемент повышенной коррозийной стойкости типа ЦТОК":
+                    pcp = 1350;
+            break;
+            case "Облегчённый тампонажный цемент типа ЦТО":
                     pcp = 1900;
-                    break;
-                default:
+            break;
+            case "Облегчённый тампонажный цемент типа ЦТО-250":
+                    pcp = 1540;
+            break;
+            case "Облегчённый тампонажный материал типа МТО":
+                    pcp = 2200;
+            break;
+                       
+            case "Тампонажный цемент для низкотемпературных скважин типа ЦТН":
+                    pcp = 2400;
+            break;
+            case "Утяжелённый тампонажный цемент типа ШПЦС":
+                    pcp = 3000;
+            break;
+            case "Утяжелённый тампонажный цемент типа УЦГ":
+                    pcp = 3100;
+            break;
+            default:
                     try
                     {
                         pcp = Double.Parse(comboBox1.Text);
+                        textBox43.Text = null;
                     }
                     catch (FormatException)
                     {
-                        textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                        if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                        {
+                            textBox43.Text = Messin;
+                        }
                     }
                     //pcp = Convert.ToDouble(comboBox1.Text);
                     break;
@@ -369,12 +391,13 @@ namespace WindowsDIPLOM
             q = pcp / (1 + m);
             textBox16.Text = q.ToString();
 
-            Gt = kc * q * Vtp * 1000; // Общая масса сухого тампонажного материала 
+            Gt = kc * q * Vtp; // Общая масса сухого тампонажного материала 
             textBox18.Text = Gt.ToString();
-            Vv = Kv * m *Gt;
+            Vv = Kv * m * Gt;   // Объём воды для затворения цементного раствора
             textBox19.Text = Vv.ToString();
-            Gp = n * Gt;
+            Gp = n * Gt; // о
             textBox20.Text = Gp.ToString();
+            textBox43.Text = textBox43.Text + "Расчёт параметров произведён";
 
 
 
@@ -434,19 +457,17 @@ namespace WindowsDIPLOM
         {
             try
             {
-                // Получение значения переменной из TextBox
                 m = Double.Parse(textBox17.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // m = Convert.ToDouble(textBox17.Text);
+            // m = Convert.ToDouble(textBox17.Text);
         }
 
         private void textBox20_TextChanged(object sender, EventArgs e)
@@ -460,15 +481,14 @@ namespace WindowsDIPLOM
             {
                 // Получение значения переменной из TextBox
                 n = Double.Parse(textBox21.Text);
-
-                // Дальнейшая обработка переменной
-
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                // Обработка исключения при некорректном вводе
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //n = Convert.ToDouble(textBox21.Text);
         }
@@ -479,20 +499,21 @@ namespace WindowsDIPLOM
         }
 
         private void button2_Click(object sender, EventArgs e)
-        { Double PCT;
-            PCT = 0.000001*9.806*((pbj - ppp) * hbj + (pp -ppp)*(hd - hbj) + (pcp- ppp)*(H-hd-lcs));
+        {
+            Double PCT;
+            PCT = 0.000001 * 9.806 * ((pbj - ppp) * lb + (pp - ppp) * (lcp - lb) + (pcp - ppp) * (H - lcp - lcs));
             // разница гидростатического давления в затрубном пространсте и в колонне обсадных труб при конечном положении уровня цементного
             // цементного раствора в затрубном пространстве 
-            Double wkp; 
-            wkp = 25*Math.Sqrt(to/pcp); // критическая скорость жидкости в кольцевом пространстве 
+            Double wkp;
+            wkp = 25 * Math.Sqrt(to / pcp); // критическая скорость жидкости в кольцевом пространстве 
             Double Qsum;
-            Qsum = 0.785 * (Math.Pow(DD, 2) * a) * wkp;
-            Double PKP ;
-            PKP = (0.826 * lkp * pcp * L * Math.Pow(Qsum, 2) * Math.Pow(10, -6)) / (Math.Pow(dc - dh, 3) * Math.Pow(dc + dh, 2));
-            Double PTP ;
-            PTP = 0.826 * ltp * ppp * L * Math.Pow(Qsum, 2) * Math.Pow(10, -6) / Math.Pow(d, 5);
+            Qsum = 0.785 * (Math.Pow(DD, 2) * a - Math.Pow(dh,2)) * wkp;
+            Double PKP;
+            PKP = (0.826 * lkp * pcp * lc * Math.Pow(Qsum, 2) * Math.Pow(10, -6)) / (Math.Pow(dc - dh, 3) * Math.Pow(dc + dh, 2));
+            Double PTP;
+            PTP = 0.826 * ltp * ppp * lc * Math.Pow(Qsum, 2) * Math.Pow(10, -6) / Math.Pow(d, 5);
             // потери давления при турбулетнотом режиме течения жидкости
-            Double PDYN ;
+            Double PDYN;
             PDYN = PTP + PKP + Pob;
             // Суммарные гидравлические потери, возникающие в трубах и затрубном пространстве при закачке  
             // продавочной жидкости  в конце цементирования
@@ -513,12 +534,16 @@ namespace WindowsDIPLOM
         private void textBox22_TextChanged(object sender, EventArgs e)
         {
             try
-            {               
-                pbj = Double.Parse(textBox22.Text);    
+            {
+                pbj = Double.Parse(textBox22.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
-            {               
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+            {
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //pbj = Convert.ToDouble(textBox22.Text);
         }
@@ -528,25 +553,21 @@ namespace WindowsDIPLOM
             try
             {
                 ppp = Double.Parse(textBox23.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // ppp = Convert.ToDouble(textBox23.Text);
+            // ppp = Convert.ToDouble(textBox23.Text);
         }
 
         private void textBox24_TextChanged(object sender, EventArgs e)
         {
-            try
-            {
-                hbj = Double.Parse(textBox24.Text);
-            }
-            catch (FormatException)
-            {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
-            }
-            //hbj = Convert.ToDouble(textBox24.Text);
+            
         }
 
         private void textBox25_TextChanged(object sender, EventArgs e)
@@ -554,10 +575,14 @@ namespace WindowsDIPLOM
             try
             {
                 pp = Double.Parse(textBox25.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //pp = Convert.ToDouble(textBox25.Text);
         }
@@ -566,11 +591,15 @@ namespace WindowsDIPLOM
         {
             try
             {
-                hd = Double.Parse(textBox26.Text);
+                //  hd = Double.Parse(textBox26.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //hd = Convert.ToDouble(textBox26.Text);
 
@@ -581,12 +610,16 @@ namespace WindowsDIPLOM
             try
             {
                 H = Double.Parse(textBox27.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // H = Convert.ToDouble(textBox27.Text);
+            // H = Convert.ToDouble(textBox27.Text);
 
         }
 
@@ -595,10 +628,14 @@ namespace WindowsDIPLOM
             try
             {
                 to = Double.Parse(textBox28.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //to = Convert.ToDouble(textBox28.Text);
 
@@ -609,23 +646,31 @@ namespace WindowsDIPLOM
             try
             {
                 lkp = Double.Parse(textBox29.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // lkp = Convert.ToDouble(textBox29.Text);
+            // lkp = Convert.ToDouble(textBox29.Text);
         }
 
         private void textBox30_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                L = Double.Parse(textBox30.Text);
+                // L = Double.Parse(textBox30.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //L = Convert.ToDouble(textBox30.Text);
         }
@@ -635,10 +680,14 @@ namespace WindowsDIPLOM
             try
             {
                 ltp = Double.Parse(textBox31.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //ltp = Convert.ToDouble(textBox31.Text);
         }
@@ -648,12 +697,16 @@ namespace WindowsDIPLOM
             try
             {
                 DD = Double.Parse(textBox39.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // DD = Convert.ToDouble(textBox39.Text);
+            // DD = Convert.ToDouble(textBox39.Text);
         }
 
         private void textBox40_TextChanged(object sender, EventArgs e)
@@ -661,10 +714,13 @@ namespace WindowsDIPLOM
             try
             {
                 a = Double.Parse(textBox40.Text);
+textBox43.Text = null;               
             }
             catch (FormatException)
-            {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+            {          if ((textBox43.Text !=null)||(textBox43.Text== "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                } 
             }
             //a = Convert.ToDouble(textBox40.Text);
         }
@@ -674,10 +730,14 @@ namespace WindowsDIPLOM
             try
             {
                 Pob = Double.Parse(textBox41.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //Pob = Convert.ToDouble(textBox41.Text);
         }
@@ -692,27 +752,31 @@ namespace WindowsDIPLOM
             try
             {
                 qca = Double.Parse(textBox45.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //qca = Convert.ToDouble(textBox45.Text);
         }
         /// <summary>
         /// 
         /// </summary>
-        
+
         private void button3_Click(object sender, EventArgs e)
         {
             Double TZ;
-           // if (checkBox1.Checked)
+            // if (checkBox1.Checked)
             //{ }
-                
-                TZ = Math.Pow(Vtp, 3) / (nca * qca * 60); // Время приготовления и закачки цементного раствора
-            
+
+            TZ = 1000 * Vtp  / (nca * qca * 60); // Время приготовления и закачки цементного раствора
+
             Double Tstop;
-            Tstop = Math.Pow(Vstop, 3) / (qcamin * 60); // время на посадку пробки
+            Tstop = Vstop * 1000  / (qcamin * 60); // время на посадку пробки
             Double hi_i;
             hi_i = (Fkp * L) / (Ftp + Fkp) + Math.Pow(10, 6) * Fkp * (Pca_i - PDYN_i) / (9.806 * (Ftp + Fkp) * (pcp - pp)) + (L * Ftp - Vtp) / (Ftp + Fkp);
             Double Vpr_i;
@@ -746,12 +810,16 @@ namespace WindowsDIPLOM
             try
             {
                 nca = Double.Parse(textBox44.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // nca = Convert.ToDouble(textBox44.Text);
+            // nca = Convert.ToDouble(textBox44.Text);
         }
 
         private void textBox46_TextChanged(object sender, EventArgs e)
@@ -759,12 +827,16 @@ namespace WindowsDIPLOM
             try
             {
                 Vstop = Double.Parse(textBox46.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // Vstop = Convert.ToDouble(textBox46.Text);
+            // Vstop = Convert.ToDouble(textBox46.Text);
         }
 
         private void textBox47_TextChanged(object sender, EventArgs e)
@@ -772,12 +844,15 @@ namespace WindowsDIPLOM
             try
             {
                 qcamin = Double.Parse(textBox47.Text);
+textBox43.Text = null;               
             }
             catch (FormatException)
-            {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+            {          if ((textBox43.Text !=null)||(textBox43.Text== "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                } 
             }
-           // qcamin = Convert.ToDouble(textBox47.Text);
+            // qcamin = Convert.ToDouble(textBox47.Text);
         }
 
         private void textBox48_TextChanged(object sender, EventArgs e)
@@ -785,10 +860,14 @@ namespace WindowsDIPLOM
             try
             {
                 Fkp = Double.Parse(textBox48.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //Fkp = Convert.ToDouble(textBox48.Text);
         }
@@ -798,12 +877,16 @@ namespace WindowsDIPLOM
             try
             {
                 Ftp = Double.Parse(textBox49.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
-           // Ftp = Convert.ToDouble(textBox49.Text);
+            // Ftp = Convert.ToDouble(textBox49.Text);
         }
 
         private void textBox50_TextChanged(object sender, EventArgs e)
@@ -811,10 +894,14 @@ namespace WindowsDIPLOM
             try
             {
                 Pca_i = Double.Parse(textBox50.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //Pca_i = Convert.ToDouble(textBox50.Text);
         }
@@ -824,10 +911,14 @@ namespace WindowsDIPLOM
             try
             {
                 PDYN_i = Double.Parse(textBox51.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //PDYN_i = Convert.ToDouble(textBox51.Text);
         }
@@ -837,14 +928,73 @@ namespace WindowsDIPLOM
             try
             {
                 TTNO = Double.Parse(textBox52.Text);
+                textBox43.Text = null;
             }
             catch (FormatException)
             {
-                textBox43.Text = Messin.ToString("Некоректные данные при вводе, введите значение не используя  букв, при вводе нецелочисленных переменных используйте запятую, а не точку");
+                if ((textBox43.Text != null) || (textBox43.Text == "   Расчёт параметров произведён"))
+                {
+                    textBox43.Text = Messin;
+                }
             }
             //TTNO = Convert.ToDouble(textBox52.Text);         
         }
-    }
 
-        
+        private void label60_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+          
+
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void label61_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox35_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label55_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label49_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox58_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            textBox43.Text = null;
+        }
+    }
 }
+
+
+
+
+
