@@ -329,11 +329,11 @@ def res():
         L_past1 = Promezutochnaya[2]
 
 
-    VB = (Gp.Volume_buff(dolotodiam, outerdiam, poteri, ring))
+    VB = (Gp.Volume_buff(dolotodiam, outerdiam, poteri, ring, deeptrunk, deepver))
     Wv = Gp.volume_water(N_water, OS[0], density_cem)
     PV = Gp.push_volume(Kresprod, insidediam, deeptrunk, stakan1)
     pzagr = Gp.Qpod(OS[0], OS[2], deeptrunk, 0.8)
-    Pmax = Gp.PMAX(deeptrunk, stakan1, density_cem, push_density, insidediam, dinamyc_va, pzagr, deepver, dolotodiam * koefkav, outerdiam, DNS)
+    #Pmax = Gp.PMAX(deeptrunk, stakan1, density_cem, push_density, insidediam, dinamyc_va, pzagr, deepver, dolotodiam * koefkav, outerdiam, DNS)
     Bethas = Gp.bethas(DNS, dolotodiam*math.sqrt(koefkav), outerdiam, insidediam, dinamyc_va, CM_quantity*CM_flow)
 
     if parity_checkbutton == True:
@@ -358,7 +358,7 @@ def res():
 
     result_table.insert("", "end", values=(values[0], VB, OS[3], Wv, PV[0], Hydro[0]))
 
-    print(OS)
+
 
 
 
@@ -562,8 +562,8 @@ tab2 = ttk.Frame(notebook)
 notebook.add(tab2,
              text='Цементирование')
 tab3 = ttk.Frame(notebook)
-notebook.add(tab3,
-             text='ЦА и ЦМ')
+#notebook.add(tab3,
+#             text='ЦА и ЦМ')
 tab4 = ttk.Frame(notebook)
 notebook.add(tab4,
              text='Результаты')
@@ -906,7 +906,7 @@ tank_check.place(x=10, y=290)
 if tank_check == True:
     print('не тру')
 else:
-    print('тру')
+    pass
 
 
 # Вкладка 4 результы
@@ -935,7 +935,29 @@ for header_result in heads_result:
 
 result_table.place(x=5, y=250)
 
-# Вкладк
+
+final_table_tab4 = ttk.Treeview(tab4,
+                            columns=('name', 'buffervol', 'cement', 'water_zatvor', 'volume_push', 'Pmax'),
+                            height=11,
+                            padding=0,
+                            show="headings")
+
+heads_final_tab4 = ['Название', 'Объём буф. жид.', 'Масса цементного раствора', 'Объём воды для затворения', 'Объём продавочной жидкости',
+                'Макc. давление в устье']
+final_table_tab4['columns'] = heads_final_tab4
+final_table_tab4.column(0, width=110)
+final_table_tab4.column(1, width=130)
+final_table_tab4.column(2, width=165)
+final_table_tab4.column(3, width=165)
+final_table_tab4.column(4, width=165)
+final_table_tab4.column(5, width=150)
+final_table_tab4.pack(side='bottom')
+
+final_table_tab4.place(x=5, y=100)
+for header_result in heads_final_tab4:
+    final_table_tab4.heading(header_result, text=header_result, anchor='center')
+
+# Вкладка??
 fill_combobox()
 # активные элементы
 cement_coef_losless_entry = tk.Entry(tab1,

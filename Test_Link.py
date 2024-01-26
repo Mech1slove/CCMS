@@ -164,7 +164,7 @@ def bethas(t0, Dc, Dout, d, viscosity, Q):
     spd_tube = 4 * Q / (math.pi * math.pow(d, 2)) # Скорость Нисходящего потока
     spd_out = 4 * Q / (math.pi * (math.pow(Dc, 2) - math.pow(Dout, 2))) # Скорость восходящего потока
     Se = round(math.pow(10, -3)*(t0 * d / (viscosity * spd_tube)), 2)
-    SeK = round(t0 * (Dc - Dout) / (viscosity * spd_out), 2)
+    SeK = round(math.pow(10, -3) * t0 * (Dc - Dout) / (viscosity * spd_out), 2)
 
     conn = sqlite3.connect('example.db')
     cursor = conn.cursor()
@@ -188,7 +188,7 @@ class Preassure():
         ReKcrit = 7.3 * math.pow(HeK, 0.58) + 2100 #
         ReKcrit_high = 7.3 * math.pow(Hek_high, 0.58) + 2100 #  Число Рейнольдса критическое для турбулетного режима в верхнем участке обсадной колонны
 
-        spd_tube = 4 * Q * 1000/ (math.pi * math.pow(d, 2)) # Скорость Нисходящего потока
+        spd_tube = 4 * Q * 1000 / (math.pi * math.pow(d, 2)) # Скорость Нисходящего потока
         spd_out = 4 * Q * 1000 / (math.pi * (math.pow(Dc, 2) - math.pow(Dout, 2))) # Скорость восходящего потока
         spd_out_high = 4 * Q * 1000 / (math.pi * (math.pow(d_past, 2) - math.pow(Dout, 2))) # Скорость восходящего потока в верхнем участке
 
@@ -248,7 +248,7 @@ def critical_speed(Q, t0, density, density_push, density_buff, density_cemm, Dc,
     '''
     приставка K означает, что расчёт ведётся для кольцевого пространства, если нет то для внутритрубного пространства обсадной колонны 
     приставка crit означает, что скорость в том или ином участке является критической, а поток турбулентным 
-    density неизвестная величина на время естов заменена на плотность цемента
+    density неизвестная величина на время тестов заменена на плотность цемента
     '''
     #Откоректировать значения для верхнего участка кольцевого пространства
     He = t0 * density * math.pow(d, 2) / math.pow(viscosity, 2) # Число Хендсрема
@@ -284,29 +284,28 @@ def critical_speed(Q, t0, density, density_push, density_buff, density_cemm, Dc,
 
 
     if ReTR_tube > Recrit:
-        Ptube = lam * density_push * L * math.pow(spd_tube, 2) / (2 * d)
+        Ptube = lam * density_push * L * math.pow(spd_tube, 2) / (2 * d*0.001)
     else:
-        Ptube = 4 * t0 * L / (Betha * d) # 
+        Ptube = 4 * t0 * L / (Betha * d*0.001) #
 
-    if column_type == "Направление":
+    if column_type == "Направление": # допилить коэффициенты на формулах и значения длинн
         Pcircut_high = 0.0
         if ReKP_out > ReKcrit:
-            Pcircut_low = 0.5 * lamK * density_push * math.pow(spd_out, 2) / (Dc - Dout) # Наибольшее давление в цементировочной головке в момент начала закачки
+            Pcircut_low = 0.5 * lamK * density_push * math.pow(spd_out, 2) / (Dc - Dout) #
         else:
             Pcircut_low = 4 * t0 / (BethaK * (Dc - Dout))
-    else:
+    else: # для остальных типов колонн
         if ReKP_out_high > ReKcrit_high:
-            Pcircut_high = 0.5 * lamK_high * density_push * math.pow(spd_out_high, 2) / (d_past - Dout) # нужно сделать расчёт скорости для верхнего участка
+            Pcircut_high = 0.5 * lamK_high * density_push * math.pow(spd_out_high, 2) / ((d_past - Dout)*0.001) # нужно сделать расчёт скорости для верхнего участка
         else:
             Pcircut_high = 4 * t0  / (BethaK * (d_past - Dout))
         if ReKP_out > ReKcrit:
-
-            Pcircut_low = 0.5 * lamK * density_push * math.pow(spd_out, 2) / (Dc - Dout) # Наибольшее давление в цементировочной головке в момент начала закачки
+            Pcircut_low = 0.5 * lamK * (L/Lk) * density_push * math.pow(spd_out, 2) / ( (Dc-Dout) * 0.001 ) #
         else:
             Pcircut_low = 4 * t0 / (BethaK * (Dc - Dout))
-    P_zak = (density_push - density_buff) * 9.81 * Hb + Ptube + (Pcircut_low * Lk) + (Pcircut_high * Lk)
+    P_zak = (density_push - density_buff) * 9.81 * Hb + Ptube + (Pcircut_low * (Lk-L_past)) + (Pcircut_high * L_past)
 
-    P_anti = (density_cemm * Lk - density_buff * Hb - density_push * (Lk - Hb)) * 9.8 - Ptube - (Pcircut_low * Lk)  - (Pcircut_high * Lk)
+    P_anti = (density_cemm * Lk - density_buff * Hb - density_push * (Lk - Hb)) * 9.8 - Ptube - (Pcircut_low * (Lk-L_past)) - (Pcircut_high * (L_past))
 
     h_cement_out = (Column_volume - (0.785 * math.pow(d_past, 2) *Lk))  / ( 0.785 * (Lk/L) * (math.pow(Dc, 2) - math.pow(Dout, 2)))
 
@@ -333,7 +332,7 @@ def critical_speed(Q, t0, density, density_push, density_buff, density_cemm, Dc,
             else:
                 P_614 = (density_clean * Sole - (Sole - Lk - Hb + density_buff * Hb + density_cemm * (Sole - (Sole - Lk - h_cement_out)))) * 9.81 + Pcircut_low * (Sole - Hb - L_past- (Sole - Lk - h_cement_out)) + Pcircut_high * L_past
         сcit_preassure = round((Preassure * math.pow(10, -3) * Sole), 3)
-        if P_614 <= сcit_preassure:
+        if (P_614 * math.pow(10, -6)) <= сcit_preassure:
             print('цементировать можно')
         else:
             print('разорвёт пласт')
